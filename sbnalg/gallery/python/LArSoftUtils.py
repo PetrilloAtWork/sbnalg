@@ -229,7 +229,7 @@ def serviceClassToConfigKeys(serviceClassName: str) -> list[str]:
   candidates = []
   
   # remove namespaces (namespaces are not part of any candidate)
-  try: serviceClassName = serviceClassName[:serviceClassName.index('::')]
+  try: serviceClassName = serviceClassName[:serviceClassName.rindex('::')]
   except ValueError: pass # no namespace
 
   if not serviceClassName: return [] # ?!
@@ -287,10 +287,10 @@ def readServiceConfig(getConfig, configKey, returnConfigKey = True):
     = tuple(base + suffix for base in serviceClassToConfigKeys(configKey))
   
   Logger.debug("Configuration from candidates: '%s'", "', '".join(configKeys))
-  for configKey in configKeys:
-    try: config = getConfig(configKey)
+  for candidateKey in configKeys:
+    try: config = getConfig(candidateKey)
     except Exception: continue
-    return (config, configKey) if returnConfigKey else config
+    return (config, candidateKey) if returnConfigKey else config
   raise RuntimeError(f"No configuration for service key '{configKey}'")
 # readServiceConfig()
 
@@ -319,7 +319,7 @@ def loadSimpleService \
 
   if not isinstance(config, ROOT.fhicl.ParameterSet):
     try:
-      config = getServiceConfig(
+      config = readServiceConfig(
         getConfig=(config.service if config else registry.config),
         configKey=serviceName,
         )
@@ -704,6 +704,8 @@ class ServiceManagerInstance(ServiceManagerInterface):
     def isValid(self): return self.configPath is not None
     def hasExtraConfig(self): return bool(self.extraConfig)
     def needsCustom(self): return not self.fullConfig() or self.hasExtraConfig()
+    def serviceTableName(self):
+      return 'services' if self.fullConfig() else self.serviceTable
     
     def addExtraConfig(self, extra): self.extraConfig += "\n" + extra
 
@@ -814,7 +816,7 @@ class ServiceManagerInstance(ServiceManagerInterface):
         '\n# ==============================='
         .format(
           configPath=configurationInfo.configPath,
-          serviceTable=configurationInfo.serviceTable,
+          serviceTable=configurationInfo.serviceTableName(),
           extraConfig=configurationInfo.extraConfig,
           )
         )
