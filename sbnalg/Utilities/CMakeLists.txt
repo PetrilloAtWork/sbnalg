@@ -10,4 +10,3 @@ cet_make_library(INTERFACE
 
 install_headers()
 install_source()
-install_fhicl()
