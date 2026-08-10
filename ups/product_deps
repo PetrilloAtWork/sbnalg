@@ -31,7 +31,7 @@ define_pythonpath
 # Product table.
 
 product          version   qual   flags  <table_format=2>
-lardataalg       v10_02_03
+lardataalg       v10_02_04
 sbnobj           v10_22_00
 sbnanaobj        v10_21_01
 # sbndata          v01_07
