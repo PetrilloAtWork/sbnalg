@@ -32,8 +32,8 @@ define_pythonpath
 
 product          version   qual   flags  <table_format=2>
 lardataalg       v10_02_04
-sbnobj           v10_22_00
-sbnanaobj        v10_21_01
+sbnobj           v10_23_00
+sbnanaobj        v10_23_00
 # sbndata          v01_07
 cetmodules       v3_24_01  -      only_for_build
 end_product_list
